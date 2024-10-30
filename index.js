@@ -22,9 +22,19 @@ const questions = [
 
 ]
 
+function viewDepartments() {
+
+    connection.query('SELECT * FROM department', (err, res) => {
+        if (err) throw err;
+        console.table(res);
+    })
+}
+
 function init() {
 
     inquirer.prompt(questions)
+
+    if 
 
 
 }
