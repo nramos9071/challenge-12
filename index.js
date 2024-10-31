@@ -29,7 +29,65 @@ const Department = sequelize.define('Department', {
     timestamps: false
 });
 
+const Role = sequelize.define('Role', {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    title: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    salary: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false
+    },
+    department_id: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Department,
+            key: 'id'
+        }
+    }
+}, {
+    tableName: 'roles',
+    timestamps: false
+});
 
+const Employee = sequelize.define('Employee', {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    first_name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    last_name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    role_id: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Role,
+            key: 'id'
+        }
+    },
+    manager_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    }
+}, {
+    tableName: 'employees',
+    timestamps: false
+});
+
+Role.belongsTo(Department, { foreignKey: 'department_id', as: 'department' });
+Employee.belongsTo(Role, { foreignKey: 'role_id', as: 'role' });
+Employee.belongsTo(Employee, { foreignKey: 'manager_id', as: 'manager' });
 
 
 const questions = [
@@ -64,11 +122,57 @@ async function viewDepartments() {
     }
 }
 
+
+async function viewRoles() {
+    try {
+        console.log('Fetching roles...');
+        const roles = await Role.findAll({
+            include: [
+                { model: Department, as: 'department' }
+            ]
+        });
+        if (roles.length === 0) {
+            console.log('No roles found.');
+        } else {
+            console.table(roles.map(role => role.toJSON()));
+        }
+        init(); // Call init again to prompt the user for the next action
+    } catch (err) {
+        console.error('Error fetching roles:', err);
+    }
+}
+
+async function viewEmployees() {
+    try {
+        console.log('Fetching employees...');
+        const employees = await Employee.findAll({
+            include: [
+                { model: Role, as: 'role' },
+                { model: Employee, as: 'manager' }
+            ]
+        });
+        if (employees.length === 0) {
+            console.log('No employees found.');
+        } else {
+            console.table(employees.map(emp => emp.toJSON()));
+        }
+        init(); // Call init again to prompt the user for the next action
+    } catch (err) {
+        console.error('Error fetching employees:', err);
+    }
+}
+
 function init() {
     inquirer.prompt(questions).then((answers) => {
         switch (answers.home) {
             case 'view all departments':
                 viewDepartments();
+                break;
+            case 'view all roles':
+                viewRoles();
+                break;
+            case 'view all employees':
+                viewEmployees();
                 break;
             // Add cases for other choices here
             default:
