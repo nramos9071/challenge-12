@@ -53,6 +53,8 @@ const Role = sequelize.define('Role', {
     timestamps: false
 });
 
+
+
 // Define the Employee model
 const Employee = sequelize.define('Employee', {
     id: {
@@ -66,14 +68,6 @@ const Employee = sequelize.define('Employee', {
     },
     last_name: {
         type: DataTypes.STRING,
-        allowNull: false
-    },
-    title: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    salary: {
-        type: DataTypes.INTEGER,
         allowNull: false
     },
     role_id: {
@@ -99,10 +93,10 @@ const seedData = async () => {
         console.log('Connection has been established successfully.');
 
         // Sync the models
-        await sequelize.sync({ force: true }); // Use { force: true } to drop and recreate tables
+        await sequelize.sync({ alter: true }); // Use { force: true } to drop and recreate tables
 
         // Read the SQL file
-        const seedSQL = fs.readFileSync(path.join(__dirname, 'seeds.sql'), 'utf8');
+        const seedSQL = fs.readFileSync(path.join(__dirname, './db/seeds.sql'), 'utf8');
 
         // Execute the SQL file
         await sequelize.query(seedSQL);

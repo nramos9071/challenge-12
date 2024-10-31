@@ -18,6 +18,16 @@ CREATE TABLE roles (
     FOREIGN KEY (department_id) REFERENCES department(id)
 );
 
+-- Create manager table
+CREATE TABLE manager (
+    id SERIAL PRIMARY KEY,
+    first_name VARCHAR(30) NOT NULL,
+    last_name VARCHAR(30) NOT NULL,
+    department_id INTEGER NOT NULL,
+    FOREIGN KEY (department_id) REFERENCES department(id)
+);
+
+
 -- Create employees table
 CREATE TABLE employees (
     id SERIAL PRIMARY KEY,
