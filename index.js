@@ -104,6 +104,7 @@ const questions = [
             'add a role',
             'add an employee',
             'update an employee role',
+            'exit',
         ],
     }
 
@@ -174,10 +175,16 @@ function init() {
             case 'view all employees':
                 viewEmployees();
                 break;
+            
+                
             // Add cases for other choices here
             default:
                 console.log(`Invalid action: ${answers.home}`);
                 init();
+                break;
+            case 'exit': // Handle the exit option
+                console.log('Exiting...');
+                process.exit();
                 break;
         }
     });
